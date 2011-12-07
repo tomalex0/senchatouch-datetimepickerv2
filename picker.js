@@ -128,7 +128,8 @@ Ext.setup({
                                     day  : randomNumber(0, 28),
                                     year : randomNumber(1980, 2011),
                                     hour : randomNumber(1, 12),
-                                    minute : randomNumber(0, 59)
+                                    minute : randomNumber(0, 59),
+                                    ampm : 'AM'
                                 });
                             }
                         },
@@ -159,7 +160,7 @@ Ext.setup({
                                     year : randomNumber(1980, 2011),
                                     hour : randomNumber(0, 12),
                                     minute : randomNumber(0, 59),
-                                    daynight : 'AM'
+                                    ampm : 'AM'
                                 });
                             }
                         },
@@ -174,8 +175,8 @@ Ext.setup({
                         doneButton: false,
                         cancelButton: false,
                         minuteInterval : 1,
-                        dayNight:true,
-                        slotOrder: ['month', 'day', 'year','hour','minute','daynight'],
+                        ampm:true,
+                        slotOrder: ['month', 'day', 'year','hour','minute','ampm'],
                         toolbar: {
                             items : datetimepickettoolbaritems
                         }

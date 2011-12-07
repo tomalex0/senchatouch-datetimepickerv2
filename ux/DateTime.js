@@ -54,17 +54,17 @@ Ext.define('Ext.picker.DateTime', {
         minuteText: (Ext.os.deviceType.toLowerCase() == "phone") ? 'i' : 'Minute',
        
         /**
-         * @cfg {String} daynightText
-         * The label to show for the daynight column. Defaults to 'AM/PM'.
+         * @cfg {String} ampmText
+         * The label to show for the ampm column. Defaults to 'AM/PM'.
          */
-        daynightText: (Ext.os.deviceType.toLowerCase() == "phone") ? 'A' : 'AM/PM',
+        ampmText: (Ext.os.deviceType.toLowerCase() == "phone") ? 'A' : 'AM/PM',
 
         /**
          * @cfg {Array} slotOrder
          * An array of strings that specifies the order of the slots.
          * @accessor
          */
-        slotOrder: ['month', 'day', 'year','hour','minute','daynight'],
+        slotOrder: ['month', 'day', 'year','hour','minute','ampm'],
         
         /**
          * @cfg {Int} minuteInterval
@@ -73,10 +73,10 @@ Ext.define('Ext.picker.DateTime', {
         minuteInterval : 15,
         
         /**
-         * @cfg {Int} dayNight
+         * @cfg {Boolean} ampm
          * @accessor
          */
-        dayNight : false,
+        ampm : false,
         
        
         /**
@@ -107,14 +107,14 @@ Ext.define('Ext.picker.DateTime', {
     setValue: function(value, animated) {
         if (Ext.isDate(value)) {
             
-            daynight =  'AM';
+            ampm =  'AM';
             currentHours = hour =  value.getHours();
-            if(this.getDayNight()){
+            if(this.getAmpm()){
                 if (currentHours > 12) {
-                    daynight = "PM";
+                    ampm = "PM";
                     hour -= 12;
                 } else if(currentHours == 12) {
-                   daynight = "PM";
+                   ampm = "PM";
                 } else if(currentHours == 0) {
                     hour = 12;
                 }
@@ -125,7 +125,7 @@ Ext.define('Ext.picker.DateTime', {
                 year : value.getFullYear(),
                 hour : hour,
                 minute : value.getMinutes(),
-                daynight : daynight
+                ampm : ampm
             };
         }
 
@@ -154,10 +154,10 @@ Ext.define('Ext.picker.DateTime', {
             dayval = (isNaN(day)) ? (new Date().getDate()) : day, 
             hourval = (isNaN(hour)) ? new Date().getHours() : hour,
             minuteval = (isNaN(minute)) ? new Date().getMinutes() : minute;
-            if(values.daynight && values.daynight == "PM" && hourval<12){
+            if(values.ampm && values.ampm == "PM" && hourval<12){
                 hourval = hourval + 12;
             }
-            if(values.daynight && values.daynight == "AM" && hourval == 12){
+            if(values.ampm && values.ampm == "AM" && hourval == 12){
                 hourval = hourval + 12;
             }
         return new Date(yearval, monthval, dayval, hourval, minuteval);
@@ -261,12 +261,12 @@ Ext.define('Ext.picker.DateTime', {
             months    = [],
             hours = [],
             minutes = [],
-            daynight= [],
+            ampm= [],
             ln, tmp, i,
             daysInMonth;
         
-        if(!this.getDayNight()){
-            var index = slotOrder.indexOf('daynight')
+        if(!this.getAmpm()){
+            var index = slotOrder.indexOf('ampm')
             if(index >= 0){
                 slotOrder.splice(index);
             }
@@ -301,8 +301,8 @@ Ext.define('Ext.picker.DateTime', {
             });
         }
         
-        var hourLimit =  (this.getDayNight()) ? 12 : 23
-        var hourStart =  (this.getDayNight()) ? 1 : 0
+        var hourLimit =  (this.getAmpm()) ? 12 : 23
+        var hourStart =  (this.getAmpm()) ? 1 : 0
         for(i=hourStart;i<=hourLimit;i++){
             hours.push({
                 text: this.pad2(i),
@@ -318,7 +318,7 @@ Ext.define('Ext.picker.DateTime', {
             });
         }
         
-        daynight.push({
+        ampm.push({
             text: 'AM',
             value: 'AM'
         },{
@@ -329,7 +329,7 @@ Ext.define('Ext.picker.DateTime', {
         var slots = [];
 
         slotOrder.forEach(function(item) {
-            slots.push(this.createSlot(item, days, months, years,hours,minutes,daynight));
+            slots.push(this.createSlot(item, days, months, years,hours,minutes,ampm));
         }, this);
 
         me.setSlots(slots);
@@ -339,7 +339,7 @@ Ext.define('Ext.picker.DateTime', {
      * Returns a slot config for a specified date.
      * @private
      */
-    createSlot: function(name, days, months, years,hours,minutes,daynight) {
+    createSlot: function(name, days, months, years,hours,minutes,ampm) {
         switch (name) {
             case 'year':
                 return {
@@ -381,12 +381,12 @@ Ext.define('Ext.picker.DateTime', {
                     title: this.getMinuteText(),
                     flex: (Ext.os.deviceType.toLowerCase() == "phone") ? 0.9 : 2
                 };
-            case 'daynight':
+            case 'ampm':
                 return {
-                    name: 'daynight',
+                    name: 'ampm',
                     align: (Ext.os.deviceType.toLowerCase() == "phone") ? 'left' : 'center',
-                    data: daynight,
-                    title: this.getDaynightText(),
+                    data: ampm,
+                    title: this.getAmpmText(),
                     flex: (Ext.os.deviceType.toLowerCase() == "phone") ? 1.1 : 2
                 };
         }

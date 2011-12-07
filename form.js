@@ -17,8 +17,8 @@ Ext.setup({
                     picker: {
                         yearFrom: 1980,
                         minuteInterval : 1,
-                        dayNight : true,
-                        slotOrder: ['month', 'day', 'year','hour','minute','daynight']
+                        ampm : true,
+                        slotOrder: ['month', 'day', 'year','hour','minute','ampm']
                     }
                 },{
                     xtype: 'datetimepickerfield',
@@ -29,7 +29,7 @@ Ext.setup({
                     picker: {
                         yearFrom: 1980,
                         minuteInterval : 1,
-                        dayNight : false,
+                        ampm : false,
                         slotOrder: ['month', 'day', 'year','hour','minute']
                     }
                 },{
@@ -41,8 +41,8 @@ Ext.setup({
                     picker: {
                         yearFrom: 1980,
                         minuteInterval : 1,
-                        dayNight : true,
-                        slotOrder: ['hour','minute','daynight']
+                        ampm : true,
+                        slotOrder: ['hour','minute','ampm']
                     }
                 },{
                     xtype: 'datetimepickerfield',
