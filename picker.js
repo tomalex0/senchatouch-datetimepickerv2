@@ -87,7 +87,7 @@ Ext.setup({
                                 picker.setUseTitles(!picker.getUseTitles());
                             }
                     }];
-                    var picker = Ext.create('Ext.picker.DateTime', {
+                    var picker = Ext.create('Ext.ux.picker.DateTime', {
                         useTitles: false,
                         doneButton: false,
                         cancelButton: false,
@@ -170,7 +170,7 @@ Ext.setup({
                                 picker.setUseTitles(!picker.getUseTitles());
                             }
                     }];
-                    var picker = Ext.create('Ext.picker.DateTime', {
+                    var picker = Ext.create('Ext.ux.picker.DateTime', {
                         useTitles: false,
                         doneButton: false,
                         cancelButton: false,

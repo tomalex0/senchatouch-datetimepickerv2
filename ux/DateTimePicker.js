@@ -1,6 +1,6 @@
 /**
-This is a specialized field which shows a {@link Ext.picker.DateTime} when tapped. If it has a predefined value, 
-or a value is selected in the {@link Ext.picker.DateTime}, it will be displayed like a normal {@link Ext.field.Text} 
+This is a specialized field which shows a {@link Ext.ux.picker.DateTime} when tapped. If it has a predefined value, 
+or a value is selected in the {@link Ext.ux.picker.DateTime}, it will be displayed like a normal {@link Ext.field.Text} 
 (but not selectable/changable).
 
     Ext.create('Ext.field.DateTimePicker', {
@@ -102,12 +102,12 @@ When you need to retrieve the date from the {@link Ext.field.DateTimePicker}, yo
 
 
  */
-Ext.define('Ext.field.DateTimePicker', {
+Ext.define('Ext.ux.field.DateTimePicker', {
     extend: 'Ext.field.Text',
     alternateClassName: 'Ext.form.DateTimePicker',
     alias : 'widget.datetimepickerfield',
     requires: [
-        'Ext.picker.DateTime',
+        'Ext.ux.picker.DateTime',
         'Ext.DateExtras'
     ],
 
@@ -122,8 +122,8 @@ Ext.define('Ext.field.DateTimePicker', {
         ui: 'select',
 
         /**
-         * @cfg {Object/Ext.picker.DateTime} picker
-         * An object that is used when creating the internal {@link Ext.picker.DateTime} component or a direct instance of {@link Ext.picker.DateTime}
+         * @cfg {Object/Ext.ux.picker.DateTime} picker
+         * An object that is used when creating the internal {@link Ext.ux.picker.DateTime} component or a direct instance of {@link Ext.ux.picker.DateTime}
          * Defaults to true
          * @accessor
          */
@@ -138,7 +138,7 @@ Ext.define('Ext.field.DateTimePicker', {
 
         /**
          * @cfg {Object/Date} value
-         * Default value for the field and the internal {@link Ext.picker.DateTime} component. Accepts an object of 'year',
+         * Default value for the field and the internal {@link Ext.ux.picker.DateTime} component. Accepts an object of 'year',
          * 'month' and 'day' values, all of which should be numbers, or a {@link Date}.
          *
          * Example: {year: 1989, day: 1, month: 5} = 1st May 1989 or new Date()
@@ -226,7 +226,7 @@ Ext.define('Ext.field.DateTimePicker', {
             return null;
         }
 
-        return Ext.factory(config, Ext.picker.DateTime, this.getPicker());
+        return Ext.factory(config, Ext.ux.picker.DateTime, this.getPicker());
     },
 
     updatePicker: function(newPicker) {
@@ -268,7 +268,7 @@ Ext.define('Ext.field.DateTimePicker', {
 
     /**
      * Called when the picker changes its value
-     * @param {Ext.picker.DateTime} picker The date picker
+     * @param {Ext.ux.picker.DateTime} picker The date picker
      * @param {Object} value The new value from the date picker
      * @private
      */

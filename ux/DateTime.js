@@ -1,7 +1,7 @@
-Ext.define('Ext.picker.DateTime', {
+Ext.define('Ext.ux.picker.DateTime', {
     extend: 'Ext.picker.Picker',
     xtype: 'datetimepicker',
-    alternateClassName: 'Ext.DateTimePicker',
+    alternateClassName: 'Ext.ux.DateTimePicker',
     requires: ['Ext.DateExtras'],
 
     config: {
