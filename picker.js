@@ -9,7 +9,7 @@ Ext.setup({
         var randomNumber = function(from, to) {
             return Math.floor(Math.random() * (to - from + 1) + from);
         };
-        
+        var isPhone = Ext.os.deviceType.toLowerCase() == "phone";
         var panel = Ext.create('Ext.Panel', {
             fullscreen: true,
             layout: {
