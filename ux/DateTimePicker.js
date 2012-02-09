@@ -251,6 +251,10 @@ Ext.define('Ext.ux.field.DateTimePicker', {
             return false;
         }
 
+        if (this.getReadOnly()) {
+            return false;
+        }
+
         var picker = this.getPicker(),
             initialConfig = this.getInitialConfig();
         
@@ -261,6 +265,8 @@ Ext.define('Ext.ux.field.DateTimePicker', {
             this._picker = picker;
         }
         this.fireEvent('pickershow',picker,this);
+        //TODO Temporary fix, have to check other source to get a better option.
+        Ext.Viewport.add(picker);
         picker.show();
 
         return false;

@@ -98,7 +98,7 @@ Ext.setup({
                         }
                         
                     });
-
+                    Ext.Viewport.add(picker);
                     picker.show();
                 }
             },{
@@ -182,7 +182,7 @@ Ext.setup({
                         }
                         
                     });
-
+                    Ext.Viewport.add(picker);
                     picker.show();
                 }
             }]
