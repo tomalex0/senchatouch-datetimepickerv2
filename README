@@ -1,0 +1,4 @@
+DateTimePicker Field compatible with  ST2 version
+
+Changes Made
+format property is replaced with dateTimeFormat

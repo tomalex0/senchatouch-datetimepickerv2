@@ -25,7 +25,7 @@ Ext.setup({
                     name : '24hrdt',
                     label: '24 Hr DateTime',
                     value: new Date(),
-                    format : 'Y-m-d H:i',
+                    dateTimeFormat : 'Y-m-d H:i',
                     picker: {
                         yearFrom: 1980,
                         minuteInterval : 1,
@@ -37,7 +37,7 @@ Ext.setup({
                     name : '12hr',
                     label: '12 Hr Time',
                     value: new Date(),
-                    format : 'h:i:A',
+                    dateTimeFormat : 'h:i:A',
                     picker: {
                         yearFrom: 1980,
                         minuteInterval : 1,
@@ -49,7 +49,7 @@ Ext.setup({
                     name : '24hr',
                     label: '24 Hr Time',
                     value: new Date(),
-                    format : 'H:i',
+                    dateTimeFormat : 'H:i',
                     picker: {
                         yearFrom: 1980,
                         minuteInterval : 1,
