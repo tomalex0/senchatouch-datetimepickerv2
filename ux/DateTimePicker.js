@@ -266,7 +266,7 @@ Ext.define('Ext.ux.field.DateTimePicker', {
             picker = Ext.factory(picker, Ext.ux.picker.DateTime);
             picker.on({
                 scope: this,
-
+                cancel: 'onPickerCancel',
                 change: 'onPickerChange',
                 hide  : 'onPickerHide'
             });
@@ -295,7 +295,17 @@ Ext.define('Ext.ux.field.DateTimePicker', {
 
         return false;
     },
-
+    
+    /**
+     * @private
+     * Revert internal date so field won't appear changed
+     */
+    onPickerCancel: function(picker, options) {
+        this._picker = this._picker.config;
+        picker.destroy();
+        return true;
+    },
+    
     /**
      * Called when the picker changes its value
      * @param {Ext.ux.picker.DateTime} picker The date picker
