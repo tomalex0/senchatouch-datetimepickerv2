@@ -168,7 +168,7 @@ Ext.define('Ext.ux.picker.DateTime', {
                 hourval = hourval + 12;
             }
             if(values.ampm && values.ampm == "AM" && hourval == 12){
-                hourval = hourval + 12;
+                hourval = 0;
             }
         return new Date(yearval, monthval, dayval, hourval, minuteval);
     },
