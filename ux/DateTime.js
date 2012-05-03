@@ -40,19 +40,19 @@ Ext.define('Ext.ux.picker.DateTime', {
          * @accessor
          */
         yearText: (Ext.os.deviceType.toLowerCase() == "phone") ? 'Y' : 'Year',
-        
+
         /**
         * @cfg {String} hourText
         * The label to show for the hour column. Defaults to 'Hour'.
         */
         hourText: (Ext.os.deviceType.toLowerCase() == "phone") ? 'H' : 'Hour',
-       
+
         /**
          * @cfg {String} minuteText
          * The label to show for the minute column. Defaults to 'Minute'.
          */
         minuteText: (Ext.os.deviceType.toLowerCase() == "phone") ? 'i' : 'Minute',
-       
+
         /**
          * @cfg {String} ampmText
          * The label to show for the ampm column. Defaults to 'AM/PM'.
@@ -65,20 +65,20 @@ Ext.define('Ext.ux.picker.DateTime', {
          * @accessor
          */
         slotOrder: ['month', 'day', 'year','hour','minute','ampm'],
-        
+
         /**
          * @cfg {Int} minuteInterval
          * @accessor
          */
         minuteInterval : 15,
-        
+
         /**
          * @cfg {Boolean} ampm
          * @accessor
          */
         ampm : false,
-        
-       
+
+
         /**
          * @cfg {Object/Date} value
          * Default value for the field and the internal {@link Ext.picker.Date} component. Accepts an object of 'year',
@@ -89,7 +89,7 @@ Ext.define('Ext.ux.picker.DateTime', {
          * new Date() = current date
          * @accessor
          */
-        
+
         /**
          * @cfg {Boolean} useTitles
          * Generate a title header for each individual slot and use
@@ -103,7 +103,7 @@ Ext.define('Ext.ux.picker.DateTime', {
          * @accessor
          */
     },
-    
+
     initialize: function() {
         this.callParent();
 
@@ -116,7 +116,7 @@ Ext.define('Ext.ux.picker.DateTime', {
 
     setValue: function(value, animated) {
         if (Ext.isDate(value)) {
-            
+
             ampm =  'AM';
             currentHours = hour =  value.getHours();
             if(this.getAmpm()){
@@ -148,7 +148,7 @@ Ext.define('Ext.ux.picker.DateTime', {
             items = this.getItems().items,
             ln = items.length,
             item, i;
-        
+
         for (i = 0; i < ln; i++) {
             item = items[i];
             if (item instanceof Ext.picker.Slot) {
@@ -157,11 +157,11 @@ Ext.define('Ext.ux.picker.DateTime', {
         }
         daysInMonth = this.getDaysInMonth(values.month, values.year);
         day = Math.min(values.day, daysInMonth),hour = values.hour,  minute = values.minute;
-        
-        
+
+
         var yearval = (isNaN(values.year)) ? new Date().getFullYear() : values.year,
             monthval = (isNaN(values.month)) ? (new Date().getMonth()) : (values.month - 1),
-            dayval = (isNaN(day)) ? (new Date().getDate()) : day, 
+            dayval = (isNaN(day)) ? (new Date().getDate()) : day,
             hourval = (isNaN(hour)) ? new Date().getHours() : hour,
             minuteval = (isNaN(minute)) ? new Date().getMinutes() : minute;
             if(values.ampm && values.ampm == "PM" && hourval<12){
@@ -172,7 +172,7 @@ Ext.define('Ext.ux.picker.DateTime', {
             }
         return new Date(yearval, monthval, dayval, hourval, minuteval);
     },
-    
+
     /**
      * Updates the yearFrom configuration
      */
@@ -198,7 +198,7 @@ Ext.define('Ext.ux.picker.DateTime', {
         var innerItems = this.getInnerItems,
             ln = innerItems.length,
             item, i;
-        
+
         //loop through each of the current items and set the title on the correct slice
         if (this.initialized) {
             for (i = 0; i < ln; i++) {
@@ -274,7 +274,7 @@ Ext.define('Ext.ux.picker.DateTime', {
             ampm= [],
             ln, tmp, i,
             daysInMonth;
-        
+
         if(!this.getAmpm()){
             var index = slotOrder.indexOf('ampm')
             if(index >= 0){
@@ -310,7 +310,7 @@ Ext.define('Ext.ux.picker.DateTime', {
                 value: i + 1
             });
         }
-        
+
         var hourLimit =  (this.getAmpm()) ? 12 : 23
         var hourStart =  (this.getAmpm()) ? 1 : 0
         for(i=hourStart;i<=hourLimit;i++){
@@ -319,15 +319,15 @@ Ext.define('Ext.ux.picker.DateTime', {
                 value: i
             });
         }
-        
-        
+
+
         for(i=0;i<60;i+=this.getMinuteInterval()){
             minutes.push({
                 text: this.pad2(i),
                 value: i
             });
         }
-        
+
         ampm.push({
             text: 'AM',
             value: 'AM'
@@ -401,22 +401,34 @@ Ext.define('Ext.ux.picker.DateTime', {
                 };
         }
     },
-    
-    onSlotPick: function() {
-        var value = this.getValue(),
-            slot = this.getDaySlot(),
-            year = value.getFullYear(),
-            month = value.getMonth(),
-            days = [],
-            selected = slot,
-            daysInMonth, i;
-            
-        if (!value || !Ext.isDate(value) || !slot) {
-            return;
-        }
 
-        //get the new days of the month for this new date
-        daysInMonth = this.getDaysInMonth(month + 1, year);
+   onSlotPick: function(pickedSlot, oldValue, htmlNode, eOpts) {
+
+        // We don't actually get passed the new value. I think this is an ST2 bug. Instead we get passed the slot,
+        // the oldValue, the node in the slot which was moved to, and options for the event.
+        //
+        // However looking at the code that fires the slotpick event, the slot.selectedIndex is always set there
+        // We can therefore use this to pull the underlying value that was picked out of the slot's store
+        var pickedValue = pickedSlot.getStore().getAt(pickedSlot.selectedIndex).get(pickedSlot.getValueField());
+
+        pickedSlot.setValue(pickedValue);
+
+        if(pickedSlot.getName() === 'month' || pickedSlot.getName() === 'year') {
+            this.repopulateDaySlot();
+        }
+    },
+
+
+    repopulateDaySlot: function() {
+        var slot = this.getDaySlot(),
+            days = [],
+            month = this.getSlotByName('month').getValue(),
+            year = this.getSlotByName('year').getValue(),
+            daysInMonth;
+
+        // Get the new days of the month for this new date
+        daysInMonth = this.getDaysInMonth(month, year);
+
         for (i = 0; i < daysInMonth; i++) {
             days.push({
                 text: i + 1,
@@ -429,45 +441,17 @@ Ext.define('Ext.ux.picker.DateTime', {
             return;
         }
 
-        // Now we have the correct amounnt of days for the day slot, lets update it
-        var store = slot.getStore(),
-            viewItems = slot.getViewItems(),
-            valueField = slot.getValueField(),
-            index, item;
-
         slot.setData(days);
-
-        index = store.find(valueField, value.getDate());
-        if (index == -1) {
-            return;
-        }
-
-        item = Ext.get(viewItems[index]);
-
-        slot.selectedIndex = index;
-        slot.scrollToItem(item);
-
-        slot._value = value;
     },
-    
+
+
+    getSlotByName: function(name) {
+        return this.down('pickerslot[name=' + name + ']');
+    },
+
+
     getDaySlot: function() {
-        var innerItems = this.getInnerItems(),
-            ln = innerItems.length,
-            i, slot;
-
-        if (this.daySlot) {
-            return this.daySlot;
-        }
-
-        for (i = 0; i < ln; i++) {
-            slot = innerItems[i];
-            if (slot.isSlot && slot.getName() == "day") {
-                this.daySlot = slot;
-                return slot;
-            }
-        }
-
-        return null;
+        return this.getSlotByName('day');
     },
 
     // @private
