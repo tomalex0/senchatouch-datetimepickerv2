@@ -260,17 +260,22 @@ Ext.define('Ext.ux.field.DateTimePicker', {
     },
 
     getPicker: function() {
-        var picker = this._picker;
+        var picker = this._picker,
+            value = this.getValue();
 
         if (picker && !picker.isPicker) {
-            picker = Ext.factory(picker, Ext.ux.picker.DateTime);
+            picker = Ext.factory(picker, WBMobile.lib.form.DateTimePicker);
             picker.on({
                 scope: this,
                 cancel: 'onPickerCancel',
                 change: 'onPickerChange',
                 hide  : 'onPickerHide'
             });
-            picker.setValue(this.getValue());
+            
+            if (value !== null) {
+                picker.setValue(value);
+            }
+            
             Ext.Viewport.add(picker);
             this._picker = picker;
         }
