@@ -264,7 +264,7 @@ Ext.define('Ext.ux.field.DateTimePicker', {
             value = this.getValue();
 
         if (picker && !picker.isPicker) {
-            picker = Ext.factory(picker, WBMobile.lib.form.DateTimePicker);
+            picker = Ext.factory(picker, Ext.ux.picker.DateTime);
             picker.on({
                 scope: this,
                 cancel: 'onPickerCancel',
