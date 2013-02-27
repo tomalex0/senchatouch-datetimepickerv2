@@ -76,32 +76,7 @@ Ext.define('Ext.ux.picker.DateTime', {
          * @cfg {Boolean} ampm
          * @accessor
          */
-        ampm : false,
-
-
-        /**
-         * @cfg {Object/Date} value
-         * Default value for the field and the internal {@link Ext.picker.Date} component. Accepts an object of 'year',
-         * 'month' and 'day' values, all of which should be numbers, or a {@link Date}.
-         *
-         * Examples:
-         * {year: 1989, day: 1, month: 5} = 1st May 1989.
-         * new Date() = current date
-         * @accessor
-         */
-
-        /**
-         * @cfg {Boolean} useTitles
-         * Generate a title header for each individual slot and use
-         * the title configuration of the slot.
-         * @accessor
-         */
-
-        /**
-         * @cfg {Array} slots
-         * @hide
-         * @accessor
-         */
+        ampm : false
     },
 
     initialize: function() {
@@ -465,6 +440,6 @@ Ext.define('Ext.ux.picker.DateTime', {
         return !!((year & 3) === 0 && (year % 100 || (year % 400 === 0 && year)));
     },
     pad2 : function(number) {
-     return (number < 10 ? '0' : '') + number
+     return (number < 10 ? '0' : '') + number ;
     }
 });
