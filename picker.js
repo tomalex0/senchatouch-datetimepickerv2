@@ -1,5 +1,4 @@
 
-
 Ext.setup({
     tabletStartupScreen: 'tablet_startup.png',
     phoneStartupScreen: 'phone_startup.png',
@@ -49,6 +48,11 @@ Ext.setup({
                                     hour : randomNumber(0, 23),
                                     minute : randomNumber(0, 59)
                                 });
+                            },
+                            listeners :{
+                                change : function(){
+                                    console.log("change");
+                                }
                             }
                         },
                         {
