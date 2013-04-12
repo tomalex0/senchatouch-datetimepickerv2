@@ -13,6 +13,13 @@ Ext.define('Ext.ux.picker.DateTime', {
         yearFrom: 1980,
 
         /**
+         * @cfg {Number} currentDateButton
+         * Show current date button to set/reset picker to current date
+         * @accessor
+         */
+        currentDateButton: false,
+
+        /**
          * @cfg {Number} yearTo
          * The last year for the date picker.
          * @default the current year (new Date().getFullYear())
@@ -79,6 +86,12 @@ Ext.define('Ext.ux.picker.DateTime', {
         ampm : false
     },
 
+    // @private
+    constructor: function() {
+        this.callParent(arguments);
+        this.createSlots();
+    },
+
     initialize: function() {
         this.callParent();
 
@@ -87,6 +100,48 @@ Ext.define('Ext.ux.picker.DateTime', {
             delegate: '> slot',
             slotpick: this.onSlotPick
         });
+    },
+
+    /**
+     * Updates the {@link #currentDateButton} configuration. Will change it into a button when appropriate, or just update the text if needed.
+     * @param {Object} config
+     * @return {Object}
+     */
+    applyCurrentDateButton: function(config) {
+        if (config) {
+            if (Ext.isBoolean(config)) {
+                config = {};
+            }
+
+            if (typeof config == "string") {
+                config = {
+                    text: config
+                };
+            }
+
+            Ext.applyIf(config, {
+                ui: 'action',
+                align: 'right',
+                text: 'Current date'
+            });
+        }
+
+        return Ext.factory(config, 'Ext.Button', this.getCurrentDateButton());
+    },
+
+    updateCurrentDateButton: function(newCurrentDateButton, oldCurrentDateButton) {
+        var toolbar = this.getToolbar();
+
+        if (newCurrentDateButton) {
+            toolbar.add(newCurrentDateButton);
+            newCurrentDateButton.on('tap', this.onCurrentDateTap, this);
+        } else if (oldCurrentDateButton) {
+            toolbar.remove(oldCurrentDateButton);
+        }
+    },
+
+    onCurrentDateTap: function(){
+        this.setValue(new Date());
     },
 
     setValue: function(value, animated) {
@@ -226,18 +281,13 @@ Ext.define('Ext.ux.picker.DateTime', {
         }
     },
 
-    // @private
-    constructor: function() {
-        this.callParent(arguments);
-        this.createSlots();
-    },
-
     /**
      * Generates all slots for all years specified by this component, and then sets them on the component
      * @private
      */
     createSlots: function() {
         var me        = this,
+            minuteInterval = this.getMinuteInterval(),
             slotOrder = this.getSlotOrder(),
             yearsFrom = me.getYearFrom(),
             yearsTo   = me.getYearTo(),
@@ -247,6 +297,7 @@ Ext.define('Ext.ux.picker.DateTime', {
             hours = [],
             minutes = [],
             ampm= [],
+            slots = [],
             ln, tmp, i,
             daysInMonth;
 
@@ -286,8 +337,9 @@ Ext.define('Ext.ux.picker.DateTime', {
             });
         }
 
-        var hourLimit =  (this.getAmpm()) ? 12 : 23
-        var hourStart =  (this.getAmpm()) ? 1 : 0
+        var hourLimit =  (this.getAmpm()) ? 12 : 23,
+            hourStart =  (this.getAmpm()) ? 1 : 0;
+
         for(i=hourStart;i<=hourLimit;i++){
             hours.push({
                 text: this.pad2(i),
@@ -296,7 +348,7 @@ Ext.define('Ext.ux.picker.DateTime', {
         }
 
 
-        for(i=0;i<60;i+=this.getMinuteInterval()){
+        for(i=0; i<60; i+=minuteInterval){
             minutes.push({
                 text: this.pad2(i),
                 value: i
@@ -310,8 +362,6 @@ Ext.define('Ext.ux.picker.DateTime', {
             text: 'PM',
             value: 'PM'
         });
-
-        var slots = [];
 
         slotOrder.forEach(function(item) {
             slots.push(this.createSlot(item, days, months, years,hours,minutes,ampm));
