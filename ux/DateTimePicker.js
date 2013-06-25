@@ -249,9 +249,7 @@ Ext.define('Ext.ux.field.DateTimePicker', {
      */
     getFormattedValue: function(format) {
         var value = this.getValue();
-        //<debug>
         console.log(this.getDateTimeFormat(),"format");
-        //</debug>
         return (Ext.isDate(value)) ? Ext.Date.format(value, format || this.getDateTimeFormat() || Ext.util.Format.defaultDateFormat) : value;
     },
 
@@ -279,7 +277,7 @@ Ext.define('Ext.ux.field.DateTimePicker', {
             if (value !== null) {
                 picker.setValue(value);
             }
-            // Destroy garbage after picker cancel
+            // Destroy garbage, why is here don't know yet.
             if(picker.innerHtmlElement) 
                 picker.innerHtmlElement.destroy();
             
