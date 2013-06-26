@@ -413,7 +413,7 @@ Ext.define('Ext.ux.picker.DateTime', {
             case 'day':
                 return {
                     name: 'day',
-                    align: align
+                    align: align,
                     data: days,
                     title: this.getDayText(),
                     flex: isPhone ? 0.9 : 2
@@ -421,7 +421,7 @@ Ext.define('Ext.ux.picker.DateTime', {
             case 'hour':
                 return {
                     name: 'hour',
-                    align: align
+                    align: align,
                     data: hours,
                     title: this.getHourText(),
                     flex: isPhone ? 0.9 : 2
@@ -429,7 +429,7 @@ Ext.define('Ext.ux.picker.DateTime', {
             case 'minute':
                 return {
                     name: 'minute',
-                    align: align
+                    align: align,
                     data: minutes,
                     title: this.getMinuteText(),
                     flex: isPhone ? 0.9 : 2
@@ -437,7 +437,7 @@ Ext.define('Ext.ux.picker.DateTime', {
             case 'ampm':
                 return {
                     name: 'ampm',
-                    align: align
+                    align: align,
                     data: ampm,
                     title: this.getAmpmText(),
                     flex: isPhone ? 1.1 : 2
