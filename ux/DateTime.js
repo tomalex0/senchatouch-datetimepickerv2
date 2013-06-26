@@ -13,6 +13,13 @@ Ext.define('Ext.ux.picker.DateTime', {
         yearFrom: 1980,
 
         /**
+         * @cfg {Number} currentDateButton
+         * Show current date button to set/reset picker to current date
+         * @accessor
+         */
+        currentDateButton: true,
+
+        /**
          * @cfg {Number} yearTo
          * The last year for the date picker.
          * @default the current year (new Date().getFullYear())
@@ -25,39 +32,39 @@ Ext.define('Ext.ux.picker.DateTime', {
          * The label to show for the month column.
          * @accessor
          */
-        monthText: (Ext.os.deviceType.toLowerCase() == "phone") ? 'M' : 'Month',
+        monthText: 'Month',
 
         /**
          * @cfg {String} dayText
          * The label to show for the day column.
          * @accessor
          */
-        dayText: (Ext.os.deviceType.toLowerCase() == "phone") ? 'j' : 'Day',
+        dayText:  'Day',
 
         /**
          * @cfg {String} yearText
          * The label to show for the year column.
          * @accessor
          */
-        yearText: (Ext.os.deviceType.toLowerCase() == "phone") ? 'Y' : 'Year',
+        yearText: 'Year',
 
         /**
         * @cfg {String} hourText
         * The label to show for the hour column. Defaults to 'Hour'.
         */
-        hourText: (Ext.os.deviceType.toLowerCase() == "phone") ? 'H' : 'Hour',
+        hourText: 'Hour',
 
         /**
          * @cfg {String} minuteText
          * The label to show for the minute column. Defaults to 'Minute'.
          */
-        minuteText: (Ext.os.deviceType.toLowerCase() == "phone") ? 'i' : 'Minute',
+        minuteText: 'Minute',
 
         /**
          * @cfg {String} ampmText
          * The label to show for the ampm column. Defaults to 'AM/PM'.
          */
-        ampmText: (Ext.os.deviceType.toLowerCase() == "phone") ? 'A' : 'AM/PM',
+        ampmText: 'AM/PM',
 
         /**
          * @cfg {Array} slotOrder
@@ -79,6 +86,25 @@ Ext.define('Ext.ux.picker.DateTime', {
         ampm : false
     },
 
+    // @private
+    constructor: function(config) {
+        var isPhone = (Ext.os.deviceType.toLowerCase() == "phone");
+
+        if(!isPhone) {
+            Ext.applyIf(config,{
+                monthText : 'M',
+                dayText : 'j',
+                yearText : 'Y',
+                hourText : 'H',
+                minuteText : 'i',
+                ampmText : 'A'
+            });
+        }
+
+        this.callParent(arguments);
+        this.createSlots();
+    },
+
     initialize: function() {
         this.callParent();
 
@@ -89,18 +115,61 @@ Ext.define('Ext.ux.picker.DateTime', {
         });
     },
 
-    setValue: function(value, animated) {
-        if (Ext.isDate(value)) {
+    /**
+     * Updates the {@link #currentDateButton} configuration. Will change it into a button when appropriate, or just update the text if needed.
+     * @param {Object} config
+     * @return {Object}
+     */
+    applyCurrentDateButton: function(config) {
+        if (config) {
+            if (Ext.isBoolean(config)) {
+                config = {};
+            }
 
-            ampm =  'AM';
+            if (typeof config == "string") {
+                config = {
+                    text: config
+                };
+            }
+
+            Ext.applyIf(config, {
+                ui: 'action',
+                align: 'right',
+                text: 'Current date'
+            });
+        }
+
+        return Ext.factory(config, 'Ext.Button', this.getCurrentDateButton());
+    },
+
+    updateCurrentDateButton: function(newCurrentDateButton, oldCurrentDateButton) {
+        var toolbar = this.getToolbar();
+
+        if (newCurrentDateButton) {
+            toolbar.add(newCurrentDateButton);
+            newCurrentDateButton.on('tap', this.onCurrentDateTap, this);
+        } else if (oldCurrentDateButton) {
+            toolbar.remove(oldCurrentDateButton);
+        }
+    },
+
+    onCurrentDateTap: function(){
+        this.setValue(new Date());
+    },
+
+    setValue: function(value, animated) {
+        var ampm='AM',
+            hour,currentHours;
+        
+        if (Ext.isDate(value)) {
             currentHours = hour =  value.getHours();
             if(this.getAmpm()){
                 if (currentHours > 12) {
                     ampm = "PM";
                     hour -= 12;
-                } else if(currentHours == 12) {
+                } else if(currentHours === 12) {
                    ampm = "PM";
-                } else if(currentHours == 0) {
+                } else if(currentHours === 0) {
                     hour = 12;
                 }
             }
@@ -134,11 +203,12 @@ Ext.define('Ext.ux.picker.DateTime', {
         day = Math.min(values.day, daysInMonth),hour = values.hour,  minute = values.minute;
 
 
-        var yearval = (isNaN(values.year)) ? new Date().getFullYear() : values.year,
-            monthval = (isNaN(values.month)) ? (new Date().getMonth()) : (values.month - 1),
-            dayval = (isNaN(day)) ? (new Date().getDate()) : day,
-            hourval = (isNaN(hour)) ? new Date().getHours() : hour,
-            minuteval = (isNaN(minute)) ? new Date().getMinutes() : minute;
+        var currentDate = new Date(),
+            yearval = (isNaN(values.year)) ? currentDate.getFullYear() : values.year,
+            monthval = (isNaN(values.month)) ? currentDate.getMonth() : (values.month - 1),
+            dayval = (isNaN(day)) ? currentDate.getDate() : day,
+            hourval = (isNaN(hour)) ? currentDate.getHours() : hour,
+            minuteval = (isNaN(minute)) ? currentDate.getMinutes() : minute;
             if(values.ampm && values.ampm == "PM" && hourval<12){
                 hourval = hourval + 12;
             }
@@ -226,18 +296,13 @@ Ext.define('Ext.ux.picker.DateTime', {
         }
     },
 
-    // @private
-    constructor: function() {
-        this.callParent(arguments);
-        this.createSlots();
-    },
-
     /**
      * Generates all slots for all years specified by this component, and then sets them on the component
      * @private
      */
     createSlots: function() {
         var me        = this,
+            minuteInterval = this.getMinuteInterval(),
             slotOrder = this.getSlotOrder(),
             yearsFrom = me.getYearFrom(),
             yearsTo   = me.getYearTo(),
@@ -247,11 +312,12 @@ Ext.define('Ext.ux.picker.DateTime', {
             hours = [],
             minutes = [],
             ampm= [],
+            slots = [],
             ln, tmp, i,
             daysInMonth;
 
         if(!this.getAmpm()){
-            var index = slotOrder.indexOf('ampm')
+            var index = slotOrder.indexOf('ampm');
             if(index >= 0){
                 slotOrder.splice(index);
             }
@@ -286,8 +352,9 @@ Ext.define('Ext.ux.picker.DateTime', {
             });
         }
 
-        var hourLimit =  (this.getAmpm()) ? 12 : 23
-        var hourStart =  (this.getAmpm()) ? 1 : 0
+        var hourLimit =  (this.getAmpm()) ? 12 : 23,
+            hourStart =  (this.getAmpm()) ? 1 : 0;
+
         for(i=hourStart;i<=hourLimit;i++){
             hours.push({
                 text: this.pad2(i),
@@ -296,7 +363,7 @@ Ext.define('Ext.ux.picker.DateTime', {
         }
 
 
-        for(i=0;i<60;i+=this.getMinuteInterval()){
+        for(i=0; i<60; i+=minuteInterval){
             minutes.push({
                 text: this.pad2(i),
                 value: i
@@ -311,8 +378,6 @@ Ext.define('Ext.ux.picker.DateTime', {
             value: 'PM'
         });
 
-        var slots = [];
-
         slotOrder.forEach(function(item) {
             slots.push(this.createSlot(item, days, months, years,hours,minutes,ampm));
         }, this);
@@ -325,54 +390,57 @@ Ext.define('Ext.ux.picker.DateTime', {
      * @private
      */
     createSlot: function(name, days, months, years,hours,minutes,ampm) {
+        var isPhone = (Ext.os.deviceType.toLowerCase() == "phone"),
+            align = (Ext.os.deviceType.toLowerCase() == "phone") ? 'left' : 'center';
+
         switch (name) {
             case 'year':
                 return {
                     name: 'year',
-                    align: (Ext.os.deviceType.toLowerCase() == "phone") ? 'left' : 'center',
+                    align: align,
                     data: years,
                     title: this.getYearText(),
-                    flex: (Ext.os.deviceType.toLowerCase() == "phone") ? 1.3 : 3
+                    flex: isPhone ? 1.3 : 3
                 };
             case 'month':
                 return {
                     name: name,
-                    align: (Ext.os.deviceType.toLowerCase() == "phone") ? 'left' : 'right',
+                    align: isPhone ? 'left' : 'right',
                     data: months,
                     title: this.getMonthText(),
-                    flex: (Ext.os.deviceType.toLowerCase() == "phone") ? 1.2 : 4
+                    flex: isPhone ? 1.2 : 4
                 };
             case 'day':
                 return {
                     name: 'day',
-                    align: (Ext.os.deviceType.toLowerCase() == "phone") ? 'left' : 'center',
+                    align: align,
                     data: days,
                     title: this.getDayText(),
-                    flex: (Ext.os.deviceType.toLowerCase() == "phone") ? 0.9 : 2
+                    flex: isPhone ? 0.9 : 2
                 };
             case 'hour':
                 return {
                     name: 'hour',
-                    align: (Ext.os.deviceType.toLowerCase() == "phone") ? 'left' : 'center',
+                    align: align,
                     data: hours,
                     title: this.getHourText(),
-                    flex: (Ext.os.deviceType.toLowerCase() == "phone") ? 0.9 : 2
+                    flex: isPhone ? 0.9 : 2
                 };
             case 'minute':
                 return {
                     name: 'minute',
-                    align: (Ext.os.deviceType.toLowerCase() == "phone") ? 'left' : 'center',
+                    align: align,
                     data: minutes,
                     title: this.getMinuteText(),
-                    flex: (Ext.os.deviceType.toLowerCase() == "phone") ? 0.9 : 2
+                    flex: isPhone ? 0.9 : 2
                 };
             case 'ampm':
                 return {
                     name: 'ampm',
-                    align: (Ext.os.deviceType.toLowerCase() == "phone") ? 'left' : 'center',
+                    align: align,
                     data: ampm,
                     title: this.getAmpmText(),
-                    flex: (Ext.os.deviceType.toLowerCase() == "phone") ? 1.1 : 2
+                    flex: isPhone ? 1.1 : 2
                 };
         }
     },
@@ -399,7 +467,7 @@ Ext.define('Ext.ux.picker.DateTime', {
             days = [],
             month = this.getSlotByName('month').getValue(),
             year = this.getSlotByName('year').getValue(),
-            daysInMonth;
+            daysInMonth,i;
 
         // Get the new days of the month for this new date
         daysInMonth = this.getDaysInMonth(month, year);

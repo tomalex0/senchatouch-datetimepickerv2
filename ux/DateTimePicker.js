@@ -1,6 +1,8 @@
 /**
  * @aside guide forms
  *
+ * https://github.com/tomalex0/senchatouch-datetimepickerv2
+ *
  * This is a specialized field which shows a {@link Ext.ux.picker.DateTime} when tapped. If it has a predefined value,
  * or a value is selected in the {@link Ext.ux.picker.DateTime}, it will be displayed like a normal {@link Ext.field.Text}
  * (but not selectable/changable).
@@ -275,6 +277,9 @@ Ext.define('Ext.ux.field.DateTimePicker', {
             if (value !== null) {
                 picker.setValue(value);
             }
+            // Destroy garbage, why is here don't know yet.
+            if(picker.innerHtmlElement) 
+                picker.innerHtmlElement.destroy();
             
             Ext.Viewport.add(picker);
             this._picker = picker;
@@ -321,7 +326,6 @@ Ext.define('Ext.ux.field.DateTimePicker', {
         var me = this;
 
         me.setValue(value);
-        me.fireEvent('change', me, me.getValue());
     },
 
     /**
