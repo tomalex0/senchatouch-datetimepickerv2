@@ -325,54 +325,57 @@ Ext.define('Ext.ux.picker.DateTime', {
      * @private
      */
     createSlot: function(name, days, months, years,hours,minutes,ampm) {
+        var isPhone = (Ext.os.deviceType.toLowerCase() == "phone"),
+            align = (isPhone) ? 'left' : 'center';
+
         switch (name) {
             case 'year':
                 return {
                     name: 'year',
-                    align: (Ext.os.deviceType.toLowerCase() == "phone") ? 'left' : 'center',
+                    align: align,
                     data: years,
                     title: this.getYearText(),
-                    flex: (Ext.os.deviceType.toLowerCase() == "phone") ? 1.3 : 3
+                    flex: isPhone ? 1.3 : 3
                 };
             case 'month':
                 return {
                     name: name,
-                    align: (Ext.os.deviceType.toLowerCase() == "phone") ? 'left' : 'right',
+                    align: isPhone ? 'left' : 'right',
                     data: months,
                     title: this.getMonthText(),
-                    flex: (Ext.os.deviceType.toLowerCase() == "phone") ? 1.2 : 4
+                    flex: isPhone ? 1.2 : 4
                 };
             case 'day':
                 return {
                     name: 'day',
-                    align: (Ext.os.deviceType.toLowerCase() == "phone") ? 'left' : 'center',
+                    align: align,
                     data: days,
                     title: this.getDayText(),
-                    flex: (Ext.os.deviceType.toLowerCase() == "phone") ? 0.9 : 2
+                    flex: isPhone ? 0.9 : 2
                 };
             case 'hour':
                 return {
                     name: 'hour',
-                    align: (Ext.os.deviceType.toLowerCase() == "phone") ? 'left' : 'center',
+                    align: align,
                     data: hours,
                     title: this.getHourText(),
-                    flex: (Ext.os.deviceType.toLowerCase() == "phone") ? 0.9 : 2
+                    flex: isPhone ? 0.9 : 2
                 };
             case 'minute':
                 return {
                     name: 'minute',
-                    align: (Ext.os.deviceType.toLowerCase() == "phone") ? 'left' : 'center',
+                    align: align,
                     data: minutes,
                     title: this.getMinuteText(),
-                    flex: (Ext.os.deviceType.toLowerCase() == "phone") ? 0.9 : 2
+                    flex: isPhone ? 0.9 : 2
                 };
             case 'ampm':
                 return {
                     name: 'ampm',
-                    align: (Ext.os.deviceType.toLowerCase() == "phone") ? 'left' : 'center',
+                    align: align,
                     data: ampm,
                     title: this.getAmpmText(),
-                    flex: (Ext.os.deviceType.toLowerCase() == "phone") ? 1.1 : 2
+                    flex: isPhone ? 1.1 : 2
                 };
         }
     },
