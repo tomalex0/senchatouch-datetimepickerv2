@@ -70,7 +70,7 @@ Ext.define('Ext.ux.picker.DateTime', {
          * @cfg {Int} minuteInterval
          * @accessor
          */
-        minuteInterval : 15,
+        minuteInterval : 1,
 
         /**
          * @cfg {Boolean} ampm
