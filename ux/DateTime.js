@@ -127,7 +127,7 @@ Ext.define('Ext.ux.picker.DateTime', {
         for (i = 0; i < ln; i++) {
             item = items[i];
             if (item instanceof Ext.picker.Slot) {
-                values[item.getName()] = item.getValue();
+                values[item.getName()] = item.getValue(true);
             }
         }
         daysInMonth = this.getDaysInMonth(values.month, values.year);
@@ -251,7 +251,7 @@ Ext.define('Ext.ux.picker.DateTime', {
             daysInMonth;
 
         if(!this.getAmpm()){
-            var index = slotOrder.indexOf('ampm')
+            var index = slotOrder.indexOf('ampm');
             if(index >= 0){
                 slotOrder.splice(index);
             }
@@ -286,8 +286,8 @@ Ext.define('Ext.ux.picker.DateTime', {
             });
         }
 
-        var hourLimit =  (this.getAmpm()) ? 12 : 23
-        var hourStart =  (this.getAmpm()) ? 1 : 0
+        var hourLimit =  (this.getAmpm()) ? 12 : 23;
+        var hourStart =  (this.getAmpm()) ? 1 : 0;
         for(i=hourStart;i<=hourLimit;i++){
             hours.push({
                 text: this.pad2(i),
@@ -407,7 +407,7 @@ Ext.define('Ext.ux.picker.DateTime', {
         // Get the new days of the month for this new date
         daysInMonth = this.getDaysInMonth(month, year);
 
-        for (i = 0; i < daysInMonth; i++) {
+        for (var i = 0; i < daysInMonth; i++) {
             days.push({
                 text: i + 1,
                 value: i + 1
