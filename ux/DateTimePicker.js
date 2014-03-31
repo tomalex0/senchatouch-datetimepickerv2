@@ -287,7 +287,7 @@ Ext.define('Ext.ux.field.DateTimePicker', {
      * @private
      * Listener to the tap event of the mask element. Shows the internal DatePicker component when the button has been tapped.
      */
-    onMaskTap: function() {
+    onMaskTap: function(e) {
         if (this.getDisabled()) {
             return false;
         }
@@ -295,6 +295,9 @@ Ext.define('Ext.ux.field.DateTimePicker', {
         if (this.getReadOnly()) {
             return false;
         }
+        
+        // Make sure to fire the focus event
+        this.fireEvent('focus', this, e);
 
         this.getPicker().show();
 
