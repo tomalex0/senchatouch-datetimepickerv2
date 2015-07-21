@@ -177,7 +177,13 @@ Ext.define('Ext.ux.picker.DateTime', {
             if(values.ampm && values.ampm == "AM" && hourval == 12){
                 hourval = 0;
             }
-        return new Date(yearval, monthval, dayval, hourval, minuteval);
+            
+        // Return the proper values based upon UTC
+        if (this.getDisplayUTC()) {
+            return new Date(Date.UTC(yearval, monthval, dayval, hourval, minuteval));
+        } else {
+            return new Date(yearval, monthval, dayval, hourval, minuteval);
+        }
     },
 
     /**
