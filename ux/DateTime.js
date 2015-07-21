@@ -76,7 +76,14 @@ Ext.define('Ext.ux.picker.DateTime', {
          * @cfg {Boolean} ampm
          * @accessor
          */
-        ampm : false
+        ampm : false,
+        
+        /**
+         * @cfg {Boolean} displayUTC
+         * If set to true, displays UTC time in the DatePicker
+         * @accessor
+         */
+        displayUTC: false
     },
 
     initialize: function() {
@@ -92,26 +99,51 @@ Ext.define('Ext.ux.picker.DateTime', {
     setValue: function(value, animated) {
         if (Ext.isDate(value)) {
 
-            ampm =  'AM';
-            currentHours = hour =  value.getHours();
-            if(this.getAmpm()){
-                if (currentHours > 12) {
-                    ampm = "PM";
-                    hour -= 12;
-                } else if(currentHours == 12) {
-                   ampm = "PM";
-                } else if(currentHours == 0) {
-                    hour = 12;
+            // See if we should display in UTC
+            if (this.getDisplayUTC()) {
+                ampm =  'AM';
+                currentHours = hour =  value.getUTCHours();
+                if(this.getAmpm()){
+                    if (currentHours > 12) {
+                        ampm = "PM";
+                        hour -= 12;
+                    } else if(currentHours == 12) {
+                        ampm = "PM";
+                    } else if(currentHours == 0) {
+                        hour = 12;
+                    }
                 }
+                value = {
+                    day  : value.getUTCDate(),
+                    month: value.getUTCMonth() + 1,
+                    year : value.getUTCFullYear(),
+                    hour : hour,
+                    minute : value.getUTCMinutes(),
+                    ampm : ampm
+                };
+            // Display in local timezone
+            } else {
+                ampm =  'AM';
+                currentHours = hour =  value.getHours();
+                if(this.getAmpm()){
+                    if (currentHours > 12) {
+                        ampm = "PM";
+                        hour -= 12;
+                    } else if(currentHours == 12) {
+                        ampm = "PM";
+                    } else if(currentHours == 0) {
+                        hour = 12;
+                    }
+                }
+                value = {
+                    day  : value.getDate(),
+                    month: value.getMonth() + 1,
+                    year : value.getFullYear(),
+                    hour : hour,
+                    minute : value.getMinutes(),
+                    ampm : ampm
+                };
             }
-            value = {
-                day  : value.getDate(),
-                month: value.getMonth() + 1,
-                year : value.getFullYear(),
-                hour : hour,
-                minute : value.getMinutes(),
-                ampm : ampm
-            };
         }
 
         this.callParent([value, animated]);
@@ -145,7 +177,13 @@ Ext.define('Ext.ux.picker.DateTime', {
             if(values.ampm && values.ampm == "AM" && hourval == 12){
                 hourval = 0;
             }
-        return new Date(yearval, monthval, dayval, hourval, minuteval);
+            
+        // Return the proper values based upon UTC
+        if (this.getDisplayUTC()) {
+            return new Date(Date.UTC(yearval, monthval, dayval, hourval, minuteval));
+        } else {
+            return new Date(yearval, monthval, dayval, hourval, minuteval);
+        }
     },
 
     /**
